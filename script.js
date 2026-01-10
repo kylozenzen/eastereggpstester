@@ -1577,9 +1577,9 @@ className={`filter-chip ${options.duration === value ? 'active' : ''}`}
 
 // ========== MATRIX WATERFALL EASTER EGG ==========
 const MatrixWaterfall = ({ show, onClose }) => {
-const canvasRef = React.useRef(null);
+const canvasRef = useRef(null);
 
-React.useEffect(() => {
+useEffect(() => {
 if (!show) return;
 
 ```
@@ -1592,7 +1592,7 @@ return () => clearTimeout(closeTimer);
 
 }, [show, onClose]);
 
-React.useEffect(() => {
+useEffect(() => {
 if (!show) return;
 
 ```
