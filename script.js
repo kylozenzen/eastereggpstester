@@ -965,6 +965,16 @@ const motivationalQuotes = [
         cues: ["Shrug straight up.", "Hold at top.", "Don't roll shoulders."],
         progression: "Add weight when 12+ reps are strong."
       },
+      // ========== EASTER EGG ==========
+      "kung_fu": {
+        type: 'easterEgg',
+        name: "Kung Fu",
+        target: "Mind",
+        muscles: "Neo",
+        tags: ["Full Body"],
+        emoji: "😎",
+        isEasterEgg: true
+      },
     };
 
     const WORKOUT_PLANS = {
@@ -1642,7 +1652,7 @@ const GloryEasterEgg = ({ show, onClose }) => {
               animation: 'fadeIn 1s ease-in'
             }}
           >
-            — HIMYM
+            — Barney Stinson
           </div>
         )}
       </div>
@@ -1702,6 +1712,113 @@ const GloryEasterEgg = ({ show, onClose }) => {
               transform: translateY(120vh) rotate(720deg);
               opacity: 0;
             }
+          }
+        `}
+      </style>
+    </div>
+  );
+};
+
+// ========== MATRIX WATERFALL EASTER EGG ==========
+const MatrixWaterfall = ({ show, onClose }) => {
+  const [characters, setCharacters] = useState([]);
+  const canvasRef = useRef(null);
+
+  useEffect(() => {
+    if (!show) return;
+
+    // Auto-close after 4 seconds
+    const closeTimer = setTimeout(() => {
+      onClose();
+    }, 4000);
+
+    return () => clearTimeout(closeTimer);
+  }, [show, onClose]);
+
+  useEffect(() => {
+    if (!show) return;
+
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    const ctx = canvas.getContext('2d');
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    // Matrix characters (katakana + numbers)
+    const matrixChars = 'ﾊﾐﾋｰｳｼﾅﾓﾆｻﾜﾂｵﾘｱﾎﾃﾏｹﾒｴｶｷﾑﾕﾗｾﾈｽﾀﾇﾍ012345789ZXCVBNMASDFGHJKLQWERTYUIOP';
+    const fontSize = 16;
+    const columns = Math.floor(canvas.width / fontSize);
+    
+    // Array to track y-position of each column
+    const drops = Array(columns).fill(1);
+
+    const draw = () => {
+      // Semi-transparent black to create trail effect
+      ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      ctx.fillStyle = '#0F0'; // Green text
+      ctx.font = `${fontSize}px monospace`;
+
+      for (let i = 0; i < drops.length; i++) {
+        // Random character
+        const char = matrixChars[Math.floor(Math.random() * matrixChars.length)];
+        const x = i * fontSize;
+        const y = drops[i] * fontSize;
+
+        ctx.fillText(char, x, y);
+
+        // Reset drop to top randomly
+        if (y > canvas.height && Math.random() > 0.975) {
+          drops[i] = 0;
+        }
+
+        drops[i]++;
+      }
+    };
+
+    const interval = setInterval(draw, 33); // ~30fps
+
+    return () => clearInterval(interval);
+  }, [show]);
+
+  if (!show) return null;
+
+  return (
+    <div 
+      className="fixed inset-0 z-50"
+      style={{ background: '#000' }}
+      onClick={onClose}
+    >
+      <canvas 
+        ref={canvasRef}
+        className="absolute inset-0"
+      />
+      
+      {/* Optional: "Wake up, Neo..." text */}
+      <div 
+        className="absolute inset-0 flex items-center justify-center pointer-events-none"
+        style={{
+          animation: 'fadeInSlow 2s ease-in'
+        }}
+      >
+        <div 
+          className="text-2xl font-mono text-green-400"
+          style={{
+            textShadow: '0 0 20px rgba(0, 255, 0, 0.8)',
+            opacity: 0.7
+          }}
+        >
+          Wake up, Neo...
+        </div>
+      </div>
+
+      <style>
+        {`
+          @keyframes fadeInSlow {
+            from { opacity: 0; }
+            to { opacity: 0.7; }
           }
         `}
       </style>
@@ -1780,7 +1897,7 @@ const Home = ({
           </div>
           <div className="home-section-card">
             <div className="home-section-title">Start Today</div>
-            <div className="home-section-subtitle">You vs. You. Crush it!</div>
+            <div className="home-section-subtitle">Draft a calm session in seconds.</div>
             <button
               onClick={onStartWorkout}
               className="home-primary-button"
@@ -1844,6 +1961,7 @@ const Workout = ({ profile, onSelectExercise, settings, setSettings, pinnedExerc
     return ids.filter(id => {
       const eq = EQUIPMENT_DB[id];
       if (eq.type === 'cardio') return true;
+      if (eq.type === 'easterEgg') return true; // Include Easter eggs
       if (eq.type === 'machine') return gymType?.machines;
       if (eq.type === 'dumbbell') return gymType?.dumbbells?.available;
       if (eq.type === 'barbell') return gymType?.barbells?.available;
@@ -3925,6 +4043,7 @@ const CardioLogger = ({ id, onClose, onUpdateSessionLogs, sessionLogs }) => {
       const [postWorkoutQuote, setPostWorkoutQuote] = useState(null);
       const postWorkoutTimerRef = useRef(null);
       const [showEasterEgg, setShowEasterEgg] = useState(false);
+      const [showMatrix, setShowMatrix] = useState(false);
 
       const [appState, setAppState] = useState({
         lastWorkoutType: null,
@@ -4778,6 +4897,13 @@ const CardioLogger = ({ id, onClose, onUpdateSessionLogs, sessionLogs }) => {
           return;
         }
         if (!id) return;
+        
+        // Kung Fu Easter Egg
+        if (id === 'kung_fu') {
+          setShowMatrix(true);
+          return;
+        }
+        
         if (!activeSessionToday) return;
         if (EQUIPMENT_DB[id]?.comingSoon) return;
         if (mode === 'session') {
@@ -5284,6 +5410,11 @@ return (
             <GloryEasterEgg 
               show={showEasterEgg} 
               onClose={() => setShowEasterEgg(false)} 
+            />
+
+            <MatrixWaterfall 
+              show={showMatrix} 
+              onClose={() => setShowMatrix(false)} 
             />
           </div>
         </>
