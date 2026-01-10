@@ -1642,7 +1642,7 @@ const GloryEasterEgg = ({ show, onClose }) => {
               animation: 'fadeIn 1s ease-in'
             }}
           >
-            — Barney Stinson
+            — HIMYM
           </div>
         )}
       </div>
