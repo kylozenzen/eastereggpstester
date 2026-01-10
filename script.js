@@ -968,7 +968,6 @@ const EQUIPMENT_DB = {
     cues: ["Shrug straight up.", "Hold at top.", "Don't roll shoulders."],
     progression: "Add weight when 12+ reps are strong."
   },
-  // ========== EASTER EGG ==========
   "kung_fu": {
     type: 'easterEgg',
     name: "Kung Fu",
@@ -977,7 +976,7 @@ const EQUIPMENT_DB = {
     tags: ["Full Body"],
     emoji: "😎",
     isEasterEgg: true
-  },
+  }
 };
 
 const WORKOUT_PLANS = {
@@ -1576,177 +1575,14 @@ className={`filter-chip ${options.duration === value ? 'active' : ''}`}
 );
 };
 
-// ========== GLORY EASTER EGG ==========
-const GloryEasterEgg = ({ show, onClose }) => {
-const [phase, setPhase] = useState(0);
-const [confetti, setConfetti] = useState([]);
-
-useEffect(() => {
-if (!show) {
-setPhase(0);
-setConfetti([]);
-return;
-}
-
-```
-// Phase 0: Initial appearance
-// Phase 1: "Press it..." text
-// Phase 2: "Press it for glory!" with confetti
-
-const timer1 = setTimeout(() => setPhase(1), 300);
-const timer2 = setTimeout(() => {
-  setPhase(2);
-  // Generate confetti
-  const newConfetti = Array.from({ length: 50 }, (_, i) => ({
-    id: i,
-    x: Math.random() * 100,
-    delay: Math.random() * 0.5,
-    duration: 2 + Math.random() * 2,
-    rotate: Math.random() * 360,
-    color: ['#FFD700', '#FFA500', '#FF6B6B', '#4ECDC4', '#95E1D3'][Math.floor(Math.random() * 5)]
-  }));
-  setConfetti(newConfetti);
-}, 1800);
-
-const timer3 = setTimeout(() => {
-  onClose();
-}, 5000);
-
-return () => {
-  clearTimeout(timer1);
-  clearTimeout(timer2);
-  clearTimeout(timer3);
-};
-```
-
-}, [show, onClose]);
-
-if (!show) return null;
-
-return (
-<div
-className=“fixed inset-0 z-50 flex items-center justify-center”
-style={{
-background: ‘rgba(0, 0, 0, 0.9)’,
-animation: phase >= 0 ? ‘fadeIn 0.3s ease-in’ : ‘none’
-}}
-onClick={onClose}
->
-<div className="text-center px-8">
-{phase >= 1 && (
-<div
-className=“text-4xl font-black text-white mb-4”
-style={{
-animation: ‘slideDown 0.5s ease-out’,
-textShadow: ‘0 0 20px rgba(255,215,0,0.5)’
-}}
->
-Press it…
-</div>
-)}
-
-```
-    {phase >= 2 && (
-      <div 
-        className="text-5xl font-black mb-2"
-        style={{
-          background: 'linear-gradient(135deg, #FFD700 0%, #FFA500 100%)',
-          WebkitBackgroundClip: 'text',
-          WebkitTextFillColor: 'transparent',
-          animation: 'slideUp 0.6s ease-out, pulse 2s ease-in-out infinite',
-          textShadow: '0 0 30px rgba(255,215,0,0.8)'
-        }}
-      >
-        Press it for GLORY!
-      </div>
-    )}
-    
-    {phase >= 2 && (
-      <div 
-        className="text-lg text-gray-400 font-semibold"
-        style={{
-          animation: 'fadeIn 1s ease-in'
-        }}
-      >
-        — Barney Stinson
-      </div>
-    )}
-  </div>
-  
-  {/* Confetti */}
-  {confetti.map(c => (
-    <div
-      key={c.id}
-      className="absolute w-3 h-3 rounded-sm"
-      style={{
-        left: `${c.x}%`,
-        top: '-20px',
-        backgroundColor: c.color,
-        animation: `fall ${c.duration}s linear ${c.delay}s forwards`,
-        transform: `rotate(${c.rotate}deg)`,
-        boxShadow: `0 0 10px ${c.color}`
-      }}
-    />
-  ))}
-  
-  <style>
-    {`
-      @keyframes fadeIn {
-        from { opacity: 0; }
-        to { opacity: 1; }
-      }
-      @keyframes slideDown {
-        from { 
-          opacity: 0;
-          transform: translateY(-30px);
-        }
-        to { 
-          opacity: 1;
-          transform: translateY(0);
-        }
-      }
-      @keyframes slideUp {
-        from { 
-          opacity: 0;
-          transform: translateY(30px) scale(0.8);
-        }
-        to { 
-          opacity: 1;
-          transform: translateY(0) scale(1);
-        }
-      }
-      @keyframes pulse {
-        0%, 100% { 
-          transform: scale(1);
-        }
-        50% { 
-          transform: scale(1.05);
-        }
-      }
-      @keyframes fall {
-        to {
-          transform: translateY(120vh) rotate(720deg);
-          opacity: 0;
-        }
-      }
-    `}
-  </style>
-</div>
-```
-
-);
-};
-
 // ========== MATRIX WATERFALL EASTER EGG ==========
 const MatrixWaterfall = ({ show, onClose }) => {
-const [characters, setCharacters] = useState([]);
-const canvasRef = useRef(null);
+const canvasRef = React.useRef(null);
 
-useEffect(() => {
+React.useEffect(() => {
 if (!show) return;
 
 ```
-// Auto-close after 4 seconds
 const closeTimer = setTimeout(() => {
   onClose();
 }, 4000);
@@ -1756,7 +1592,7 @@ return () => clearTimeout(closeTimer);
 
 }, [show, onClose]);
 
-useEffect(() => {
+React.useEffect(() => {
 if (!show) return;
 
 ```
@@ -1767,41 +1603,30 @@ const ctx = canvas.getContext('2d');
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 
-// Matrix characters (katakana + numbers)
 const matrixChars = 'ﾊﾐﾋｰｳｼﾅﾓﾆｻﾜﾂｵﾘｱﾎﾃﾏｹﾒｴｶｷﾑﾕﾗｾﾈｽﾀﾇﾍ012345789ZXCVBNMASDFGHJKLQWERTYUIOP';
 const fontSize = 16;
 const columns = Math.floor(canvas.width / fontSize);
-
-// Array to track y-position of each column
 const drops = Array(columns).fill(1);
 
 const draw = () => {
-  // Semi-transparent black to create trail effect
   ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
   ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-  ctx.fillStyle = '#0F0'; // Green text
+  ctx.fillStyle = '#0F0';
   ctx.font = `${fontSize}px monospace`;
 
   for (let i = 0; i < drops.length; i++) {
-    // Random character
     const char = matrixChars[Math.floor(Math.random() * matrixChars.length)];
     const x = i * fontSize;
     const y = drops[i] * fontSize;
-
     ctx.fillText(char, x, y);
-
-    // Reset drop to top randomly
     if (y > canvas.height && Math.random() > 0.975) {
       drops[i] = 0;
     }
-
     drops[i]++;
   }
 };
 
-const interval = setInterval(draw, 33); // ~30fps
-
+const interval = setInterval(draw, 33);
 return () => clearInterval(interval);
 ```
 
@@ -1809,47 +1634,28 @@ return () => clearInterval(interval);
 
 if (!show) return null;
 
-return (
-<div
-className=“fixed inset-0 z-50”
-style={{ background: ‘#000’ }}
-onClick={onClose}
->
-<canvas 
-ref={canvasRef}
-className="absolute inset-0"
-/>
-
-```
-  {/* Optional: "Wake up, Neo..." text */}
-  <div 
-    className="absolute inset-0 flex items-center justify-center pointer-events-none"
-    style={{
-      animation: 'fadeInSlow 2s ease-in'
-    }}
-  >
-    <div 
-      className="text-2xl font-mono text-green-400"
-      style={{
-        textShadow: '0 0 20px rgba(0, 255, 0, 0.8)',
-        opacity: 0.7
-      }}
-    >
-      Wake up, Neo...
-    </div>
-  </div>
-
-  <style>
-    {`
-      @keyframes fadeInSlow {
-        from { opacity: 0; }
-        to { opacity: 0.7; }
-      }
-    `}
-  </style>
-</div>
-```
-
+return React.createElement(‘div’, {
+className: ‘fixed inset-0 z-50’,
+style: { background: ‘#000’ },
+onClick: onClose
+},
+React.createElement(‘canvas’, {
+ref: canvasRef,
+className: ‘absolute inset-0’
+}),
+React.createElement(‘div’, {
+className: ‘absolute inset-0 flex items-center justify-center pointer-events-none’,
+style: { animation: ‘fadeInSlow 2s ease-in’ }
+},
+React.createElement(‘div’, {
+className: ‘text-2xl font-mono text-green-400’,
+style: {
+textShadow: ‘0 0 20px rgba(0, 255, 0, 0.8)’,
+opacity: 0.7
+}
+}, ‘Wake up, Neo…’)
+),
+React.createElement(‘style’, {}, `@keyframes fadeInSlow { from { opacity: 0; } to { opacity: 0.7; } }`)
 );
 };
 
@@ -1862,27 +1668,8 @@ onGenerate,
 homeQuote,
 isRestDay,
 onLogRestDay,
-onUndoRestDay,
-onTriggerEasterEgg
+onUndoRestDay
 }) => {
-const longPressTimerRef = useRef(null);
-const [isHolding, setIsHolding] = useState(false);
-
-const handleTouchStart = () => {
-setIsHolding(true);
-longPressTimerRef.current = setTimeout(() => {
-setIsHolding(false);
-onTriggerEasterEgg();
-}, 1500); // 1.5 second hold
-};
-
-const handleTouchEnd = () => {
-setIsHolding(false);
-if (longPressTimerRef.current) {
-clearTimeout(longPressTimerRef.current);
-}
-};
-
 return (
 <div className="flex flex-col h-full bg-gray-50 home-screen">
 <div className=“bg-white border-b border-gray-100 sticky top-0 z-20” style={{ paddingTop: ‘env(safe-area-inset-top)’ }}>
@@ -1892,19 +1679,7 @@ return (
 <h1 className="text-xl font-black text-gray-900">Welcome back, {profile.username || ‘Athlete’}</h1>
 <div className="text-xs text-gray-500 font-semibold mt-1">A session on your terms.</div>
 </div>
-<div
-className=“w-11 h-11 rounded-2xl bg-purple-50 flex items-center justify-center text-xl border border-purple-200 cursor-pointer select-none transition-transform active:scale-95”
-style={{
-transform: isHolding ? ‘scale(0.9)’ : ‘scale(1)’,
-boxShadow: isHolding ? ‘0 0 20px rgba(147, 51, 234, 0.5)’ : ‘none’,
-transition: ‘all 0.1s ease’
-}}
-onTouchStart={handleTouchStart}
-onTouchEnd={handleTouchEnd}
-onMouseDown={handleTouchStart}
-onMouseUp={handleTouchEnd}
-onMouseLeave={handleTouchEnd}
->
+<div className="w-11 h-11 rounded-2xl bg-purple-50 flex items-center justify-center text-xl border border-purple-200">
 {profile.avatar}
 </div>
 </div>
@@ -1991,7 +1766,7 @@ const ids = Object.keys(EQUIPMENT_DB);
 return ids.filter(id => {
 const eq = EQUIPMENT_DB[id];
 if (eq.type === ‘cardio’) return true;
-if (eq.type === ‘easterEgg’) return true; // Include Easter eggs
+if (eq.type === ‘easterEgg’) return true;
 if (eq.type === ‘machine’) return gymType?.machines;
 if (eq.type === ‘dumbbell’) return gymType?.dumbbells?.available;
 if (eq.type === ‘barbell’) return gymType?.barbells?.available;
@@ -2095,51 +1870,43 @@ const renderExerciseRow = (id, actionLabel = ‘Add’, onAction) => {
 const eq = EQUIPMENT_DB[id];
 if (!eq) return null;
 const isComingSoon = !!eq.comingSoon;
-const isEasterEgg = eq.isEasterEgg || eq.type === ‘easterEgg’;
 const allowAdd = hasTodayWorkout && !isRestDay && !isComingSoon;
-
-```
 return (
-  <div
-    key={id}
-    className={`w-full p-3 rounded-xl border border-gray-200 bg-white flex items-center justify-between ${isEasterEgg ? 'cursor-pointer active:scale-[0.98] transition-transform' : ''}`}
-    onClick={isEasterEgg ? () => (onAction ? onAction(id) : onAddExerciseFromSearch?.(id)) : undefined}
-  >
-    <div className="flex items-center gap-3 text-left">
-      <div className="w-10 h-10 rounded-lg bg-purple-50 text-purple-700 flex items-center justify-center text-lg">
-        {getExerciseIcon(eq)}
-      </div>
-      <div>
-        <div className="font-bold workout-heading text-sm leading-tight">{eq.name}</div>
-        <div className="text-xs workout-muted">{eq.type === 'cardio' ? 'Cardio' : eq.target}</div>
-        {isComingSoon && (
-          <div className="text-[11px] text-gray-400 font-semibold">Coming Soon</div>
-        )}
-      </div>
-    </div>
-    <div className="flex items-center gap-2">
-      <button
-        onClick={(e) => { e.stopPropagation(); togglePin(id); }}
-        disabled={isComingSoon}
-        className={`px-2 py-1 rounded-full text-xs font-bold ${pinnedExercises.includes(id) ? 'workout-chip' : 'bg-gray-100 text-gray-500'} ${
-          isComingSoon ? 'opacity-50 cursor-not-allowed' : ''
-        }`}
-      >
-        {pinnedExercises.includes(id) ? 'Pinned' : 'Pin'}
-      </button>
-      {allowAdd && (
-        <button
-          onClick={(e) => { e.stopPropagation(); (onAction ? onAction(id) : onAddExerciseFromSearch?.(id)); }}
-          className="text-purple-600 font-semibold text-sm"
-        >
-          {actionLabel}
-        </button>
-      )}
-    </div>
-  </div>
+<div
+key={id}
+className="w-full p-3 rounded-xl border border-gray-200 bg-white flex items-center justify-between"
+>
+<div className="flex items-center gap-3 text-left">
+<div className="w-10 h-10 rounded-lg bg-purple-50 text-purple-700 flex items-center justify-center text-lg">
+{getExerciseIcon(eq)}
+</div>
+<div>
+<div className="font-bold workout-heading text-sm leading-tight">{eq.name}</div>
+<div className="text-xs workout-muted">{eq.type === ‘cardio’ ? ‘Cardio’ : eq.target}</div>
+{isComingSoon && (
+<div className="text-[11px] text-gray-400 font-semibold">Coming Soon</div>
+)}
+</div>
+</div>
+<div className="flex items-center gap-2">
+<button
+onClick={(e) => { e.stopPropagation(); togglePin(id); }}
+disabled={isComingSoon}
+className={`px-2 py-1 rounded-full text-xs font-bold ${pinnedExercises.includes(id) ? 'workout-chip' : 'bg-gray-100 text-gray-500'} ${ isComingSoon ? 'opacity-50 cursor-not-allowed' : '' }`}
+>
+{pinnedExercises.includes(id) ? ‘Pinned’ : ‘Pin’}
+</button>
+{allowAdd && (
+<button
+onClick={(e) => { e.stopPropagation(); (onAction ? onAction(id) : onAddExerciseFromSearch?.(id)); }}
+className=“text-purple-600 font-semibold text-sm”
+>
+{actionLabel}
+</button>
+)}
+</div>
+</div>
 );
-```
-
 };
 
 const renderExerciseTile = (id) => {
@@ -2148,14 +1915,9 @@ if (!eq) return null;
 const pinned = pinnedExercises.includes(id);
 const typeIcon = getExerciseIcon(eq);
 const isComingSoon = !!eq.comingSoon;
-const isEasterEgg = eq.isEasterEgg || eq.type === ‘easterEgg’;
 const allowAdd = hasTodayWorkout && !isRestDay && !isComingSoon;
 return (
-<div
-key={id}
-className={`tile text-left ${isEasterEgg ? 'cursor-pointer' : ''}`}
-onClick={isEasterEgg ? () => onAddExerciseFromSearch?.(id) : undefined}
->
+<div key={id} className="tile text-left">
 <div className="flex items-center justify-between mb-1">
 <div className="text-lg">{typeIcon}</div>
 <span className="text-[11px] workout-muted">{eq.type === ‘cardio’ ? ‘Cardio’ : eq.target}</span>
@@ -4081,6 +3843,7 @@ const [loaded, setLoaded] = useState(false);
   const [activeCardio, setActiveCardio] = useState(null);
   const [view, setView] = useState('onboarding');
   const [showAnalytics, setShowAnalytics] = useState(false);
+  const [showMatrix, setShowMatrix] = useState(false);
   const [activeSession, setActiveSession] = useState(null);
   const [inlineMessage, setInlineMessage] = useState(null);
   const messageTimerRef = useRef(null);
@@ -4091,8 +3854,6 @@ const [loaded, setLoaded] = useState(false);
   const [showPostWorkout, setShowPostWorkout] = useState(false);
   const [postWorkoutQuote, setPostWorkoutQuote] = useState(null);
   const postWorkoutTimerRef = useRef(null);
-  const [showEasterEgg, setShowEasterEgg] = useState(false);
-  const [showMatrix, setShowMatrix] = useState(false);
 
   const [appState, setAppState] = useState({
     lastWorkoutType: null,
@@ -4936,13 +4697,10 @@ const [loaded, setLoaded] = useState(false);
   const addExerciseFromSearch = (id) => {
     if (isRestDay) return;
     if (!id) return;
-    
-    // Kung Fu Easter Egg - trigger Matrix when trying to add
     if (id === 'kung_fu') {
       setShowMatrix(true);
       return;
     }
-    
     addExerciseToSession(id, { status: activeSessionToday?.status === 'active' ? 'active' : 'draft', toast: true });
   };
 
@@ -4953,13 +4711,6 @@ const [loaded, setLoaded] = useState(false);
       return;
     }
     if (!id) return;
-    
-    // Kung Fu Easter Egg
-    if (id === 'kung_fu') {
-      setShowMatrix(true);
-      return;
-    }
-    
     if (!activeSessionToday) return;
     if (EQUIPMENT_DB[id]?.comingSoon) return;
     if (mode === 'session') {
@@ -5401,7 +5152,6 @@ homeQuote={homeQuote}
 isRestDay={isRestDay}
 onLogRestDay={logRestDay}
 onUndoRestDay={undoRestDay}
-onTriggerEasterEgg={() => setShowEasterEgg(true)}
 />
 )}
 {tab === ‘workout’ && (
@@ -5463,11 +5213,6 @@ onResetOnboarding={handleResetOnboarding}
             onClose={() => setActiveCardio(null)}
           />
         )}
-
-        <GloryEasterEgg 
-          show={showEasterEgg} 
-          onClose={() => setShowEasterEgg(false)} 
-        />
 
         <MatrixWaterfall 
           show={showMatrix} 
