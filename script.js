@@ -1687,6 +1687,318 @@ const PowerUpEffect = ({ show, onClose }) => {
   );
 };
 
+const GloryEasterEgg = ({ show, onClose }) => {
+  const [phase, setPhase] = useState(0);
+  const [confetti, setConfetti] = useState([]);
+
+  useEffect(() => {
+    if (!show) {
+      setPhase(0);
+      setConfetti([]);
+      return;
+    }
+    
+    const timer1 = setTimeout(() => setPhase(1), 300);
+    const timer2 = setTimeout(() => {
+      setPhase(2);
+      const newConfetti = Array.from({ length: 50 }, (_, i) => ({
+        id: i,
+        x: Math.random() * 100,
+        delay: Math.random() * 0.5,
+        duration: 2 + Math.random() * 2,
+        rotate: Math.random() * 360,
+        color: ['#FFD700', '#FFA500', '#FF6B6B', '#4ECDC4', '#95E1D3'][Math.floor(Math.random() * 5)]
+      }));
+      setConfetti(newConfetti);
+    }, 1800);
+    
+    const timer3 = setTimeout(onClose, 5000);
+    
+    return () => {
+      clearTimeout(timer1);
+      clearTimeout(timer2);
+      clearTimeout(timer3);
+    };
+  }, [show, onClose]);
+
+  if (!show) return null;
+
+  return (
+    <div 
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-90"
+      onClick={onClose}
+    >
+      <div className="text-center px-8">
+        {phase >= 1 && (
+          <div 
+            className="text-4xl font-black text-white mb-4"
+            style={{
+              animation: 'slideDown 0.5s ease-out',
+              textShadow: '0 0 20px rgba(255,215,0,0.5)'
+            }}
+          >
+            Press it...
+          </div>
+        )}
+        
+        {phase >= 2 && (
+          <div 
+            className="text-5xl font-black mb-2"
+            style={{
+              background: 'linear-gradient(135deg, #FFD700 0%, #FFA500 100%)',
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
+              animation: 'slideUp 0.6s ease-out, gloryPulse 2s ease-in-out infinite',
+              textShadow: '0 0 30px rgba(255,215,0,0.8)'
+            }}
+          >
+            Press it for GLORY!
+          </div>
+        )}
+        
+        {phase >= 2 && (
+          <div 
+            className="text-lg text-gray-400 font-semibold"
+            style={{ animation: 'fadeIn 1s ease-in' }}
+          >
+            — Barney Stinson
+          </div>
+        )}
+      </div>
+      
+      {confetti.map(c => (
+        <div
+          key={c.id}
+          className="absolute w-3 h-3 rounded-sm"
+          style={{
+            left: c.x + '%',
+            top: '-20px',
+            backgroundColor: c.color,
+            animation: `fall ${c.duration}s linear ${c.delay}s forwards`,
+            transform: `rotate(${c.rotate}deg)`,
+            boxShadow: `0 0 10px ${c.color}`
+          }}
+        />
+      ))}
+      
+      <style>{`
+        @keyframes slideDown {
+          from { opacity: 0; transform: translateY(-30px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes slideUp {
+          from { opacity: 0; transform: translateY(30px) scale(0.8); }
+          to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+        @keyframes gloryPulse {
+          0%, 100% { transform: scale(1); }
+          50% { transform: scale(1.05); }
+        }
+        @keyframes fall {
+          to { transform: translateY(120vh) rotate(720deg); opacity: 0; }
+        }
+      `}</style>
+    </div>
+  );
+};
+
+const HerculesShake = ({ show, onClose }) => {
+  useEffect(() => {
+    if (!show) return;
+    const timer = setTimeout(onClose, 4000);
+    return () => clearTimeout(timer);
+  }, [show, onClose]);
+
+  if (!show) return null;
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center" onClick={onClose}>
+      <div className="absolute inset-0 bg-gradient-to-b from-blue-900 via-purple-900 to-yellow-900 opacity-95"></div>
+      
+      <div className="relative z-10 text-center">
+        <div 
+          className="text-6xl font-black mb-4 text-yellow-400"
+          style={{
+            textShadow: '0 0 40px rgba(255,215,0,1), 0 0 80px rgba(255,215,0,0.5)',
+            animation: 'herculesGlow 1s ease-in-out infinite'
+          }}
+        >
+          FROM ZERO TO HERO!
+        </div>
+        <div className="text-3xl text-white font-bold mb-2" style={{ textShadow: '0 0 20px rgba(255,255,255,0.8)' }}>
+          ⚡ STRENGTH OF THE GODS ⚡
+        </div>
+        <div className="text-xl text-yellow-200 font-semibold">
+          🏛️ Mount Olympus Approves 🏛️
+        </div>
+      </div>
+
+      <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-yellow-600 to-transparent opacity-50" style={{ animation: 'columnRise 1s ease-out' }}></div>
+
+      <style>{`
+        @keyframes herculesGlow {
+          0%, 100% { transform: scale(1); filter: brightness(1); }
+          50% { transform: scale(1.05); filter: brightness(1.3); }
+        }
+        @keyframes columnRise {
+          from { transform: translateY(100%); }
+          to { transform: translateY(0); }
+        }
+      `}</style>
+    </div>
+  );
+};
+
+const SpartanKick = ({ show, onClose }) => {
+  useEffect(() => {
+    if (!show) return;
+    const timer = setTimeout(onClose, 3000);
+    return () => clearTimeout(timer);
+  }, [show, onClose]);
+
+  if (!show) return null;
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center" onClick={onClose}>
+      <div className="absolute inset-0 bg-gradient-to-br from-amber-900 via-stone-800 to-red-900 opacity-95"></div>
+      
+      <div className="relative z-10 text-center" style={{ animation: 'kickImpact 0.5s ease-out' }}>
+        <div className="text-8xl mb-4">🗡️</div>
+        <div 
+          className="text-7xl font-black mb-4 text-red-600"
+          style={{
+            textShadow: '4px 4px 0 #000, -4px -4px 0 #000, 4px -4px 0 #000, -4px 4px 0 #000',
+            animation: 'spartanShake 0.5s ease-in-out'
+          }}
+        >
+          THIS IS SPARTA!
+        </div>
+        <div className="text-2xl text-amber-400 font-bold" style={{ textShadow: '2px 2px 4px #000' }}>
+          ⚔️ TONIGHT WE LIFT IN GLORY ⚔️
+        </div>
+      </div>
+
+      <style>{`
+        @keyframes kickImpact {
+          0% { transform: translateX(-100vw); }
+          60% { transform: translateX(20px); }
+          100% { transform: translateX(0); }
+        }
+        @keyframes spartanShake {
+          0%, 100% { transform: rotate(0deg); }
+          25% { transform: rotate(-2deg); }
+          75% { transform: rotate(2deg); }
+        }
+      `}</style>
+    </div>
+  );
+};
+
+const ButDidYouDie = ({ show, onClose, onConfirm }) => {
+  if (!show) return null;
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center">
+      <div className="absolute inset-0 bg-black opacity-80" onClick={onClose}></div>
+      
+      <div className="relative z-10 bg-gray-900 rounded-3xl p-8 max-w-sm mx-4 border-4 border-purple-500">
+        <div className="text-center mb-6">
+          <div className="text-6xl mb-4">💀</div>
+          <div className="text-4xl font-black text-white mb-2">BUT DID YOU DIE?</div>
+          <div className="text-sm text-gray-400">Rest is important, but so is consistency...</div>
+        </div>
+        
+        <div className="flex gap-3">
+          <button
+            onClick={onClose}
+            className="flex-1 px-6 py-3 bg-gray-700 text-white rounded-xl font-bold active:scale-95"
+          >
+            Nevermind
+          </button>
+          <button
+            onClick={onConfirm}
+            className="flex-1 px-6 py-3 bg-purple-600 text-white rounded-xl font-bold active:scale-95"
+          >
+            Log Rest Day
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const NiceToast = ({ show }) => {
+  if (!show) return null;
+
+  return (
+    <div 
+      className="fixed bottom-24 left-1/2 transform -translate-x-1/2 z-40 bg-purple-600 text-white px-6 py-3 rounded-full font-bold shadow-lg"
+      style={{ animation: 'niceSlide 2s ease-in-out' }}
+    >
+      Nice 😎
+      <style>{`
+        @keyframes niceSlide {
+          0% { transform: translate(-50%, 100px); opacity: 0; }
+          20% { transform: translate(-50%, 0); opacity: 1; }
+          80% { transform: translate(-50%, 0); opacity: 1; }
+          100% { transform: translate(-50%, 100px); opacity: 0; }
+        }
+      `}</style>
+    </div>
+  );
+};
+
+const PerfectWeek = ({ show, onClose }) => {
+  useEffect(() => {
+    if (!show) return;
+    const timer = setTimeout(onClose, 5000);
+    return () => clearTimeout(timer);
+  }, [show, onClose]);
+
+  if (!show) return null;
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center" onClick={onClose}>
+      <div className="absolute inset-0 bg-gradient-to-br from-purple-900 via-blue-900 to-black opacity-95"></div>
+      
+      <div className="relative z-10 text-center">
+        <div className="text-7xl mb-6">🎩</div>
+        <div 
+          className="text-6xl font-black mb-4"
+          style={{
+            background: 'linear-gradient(45deg, #FFD700, #FF1493, #FFD700)',
+            WebkitBackgroundClip: 'text',
+            WebkitTextFillColor: 'transparent',
+            animation: 'perfectPulse 1s ease-in-out infinite'
+          }}
+        >
+          YOU JUST PULLED
+        </div>
+        <div 
+          className="text-7xl font-black mb-4"
+          style={{
+            background: 'linear-gradient(135deg, #4169E1, #FFD700)',
+            WebkitBackgroundClip: 'text',
+            WebkitTextFillColor: 'transparent',
+            textShadow: '0 0 40px rgba(255,215,0,0.8)'
+          }}
+        >
+          A BARNEY!
+        </div>
+        <div className="text-3xl text-white font-bold mb-2">✋ PERFECT WEEK ✋</div>
+        <div className="text-xl text-purple-300">7 days, 7 workouts. Legendary.</div>
+      </div>
+
+      <style>{`
+        @keyframes perfectPulse {
+          0%, 100% { transform: scale(1); }
+          50% { transform: scale(1.1); }
+        }
+      `}</style>
+    </div>
+  );
+};
+
 const Home = ({
   profile,
   lastWorkoutLabel,
@@ -1696,18 +2008,90 @@ const Home = ({
   homeQuote,
   isRestDay,
   onLogRestDay,
-  onUndoRestDay
+  onUndoRestDay,
+  onTriggerGlory,
+  onTripleTapLogo,
+  onLongPressRestDay
 }) => {
+  const longPressTimerRef = useRef(null);
+  const restDayTimerRef = useRef(null);
+  const [isHolding, setIsHolding] = useState(false);
+  const [isHoldingRestDay, setIsHoldingRestDay] = useState(false);
+
+  const handleAvatarTouchStart = () => {
+    setIsHolding(true);
+    longPressTimerRef.current = setTimeout(() => {
+      setIsHolding(false);
+      onTriggerGlory();
+    }, 1500);
+  };
+
+  const handleAvatarTouchEnd = () => {
+    setIsHolding(false);
+    if (longPressTimerRef.current) {
+      clearTimeout(longPressTimerRef.current);
+    }
+  };
+
+  const handleRestDayTouchStart = (e) => {
+    if (isRestDay) return;
+    e.preventDefault();
+    setIsHoldingRestDay(true);
+    restDayTimerRef.current = setTimeout(() => {
+      setIsHoldingRestDay(false);
+      onLongPressRestDay();
+    }, 2000);
+  };
+
+  const handleRestDayTouchEnd = () => {
+    setIsHoldingRestDay(false);
+    if (restDayTimerRef.current) {
+      clearTimeout(restDayTimerRef.current);
+      restDayTimerRef.current = null;
+    }
+  };
+
+  const handleRestDayClick = () => {
+    if (restDayTimerRef.current) {
+      clearTimeout(restDayTimerRef.current);
+      restDayTimerRef.current = null;
+    }
+    if (!isHoldingRestDay) {
+      if (isRestDay) {
+        onUndoRestDay();
+      } else {
+        onLogRestDay();
+      }
+    }
+  };
+
   return (
     <div className="flex flex-col h-full bg-gray-50 home-screen">
       <div className="bg-white border-b border-gray-100 sticky top-0 z-20" style={{ paddingTop: 'env(safe-area-inset-top)' }}>
         <div className="px-4 py-3 flex items-center justify-between">
           <div>
-            <div className="text-[11px] text-gray-400 font-bold uppercase tracking-[0.2em]">PLANET STRENGTH</div>
+            <div 
+              className="text-[11px] text-gray-400 font-bold uppercase tracking-[0.2em] cursor-pointer select-none"
+              onClick={onTripleTapLogo}
+            >
+              PLANET STRENGTH
+            </div>
             <h1 className="text-xl font-black text-gray-900">Welcome back, {profile.username || 'Athlete'}</h1>
             <div className="text-xs text-gray-500 font-semibold mt-1">A session on your terms.</div>
           </div>
-          <div className="w-11 h-11 rounded-2xl bg-purple-50 flex items-center justify-center text-xl border border-purple-200">
+          <div 
+            className="w-11 h-11 rounded-2xl bg-purple-50 flex items-center justify-center text-xl border border-purple-200 cursor-pointer select-none transition-transform active:scale-95"
+            style={{
+              transform: isHolding ? 'scale(0.9)' : 'scale(1)',
+              boxShadow: isHolding ? '0 0 20px rgba(147, 51, 234, 0.5)' : 'none',
+              transition: 'all 0.1s ease'
+            }}
+            onTouchStart={handleAvatarTouchStart}
+            onTouchEnd={handleAvatarTouchEnd}
+            onMouseDown={handleAvatarTouchStart}
+            onMouseUp={handleAvatarTouchEnd}
+            onMouseLeave={handleAvatarTouchEnd}
+          >
             {profile.avatar}
           </div>
         </div>
@@ -1762,8 +2146,18 @@ const Home = ({
             </div>
           )}
           <button
-            onClick={isRestDay ? onUndoRestDay : onLogRestDay}
+            onClick={handleRestDayClick}
+            onTouchStart={handleRestDayTouchStart}
+            onTouchEnd={handleRestDayTouchEnd}
+            onMouseDown={handleRestDayTouchStart}
+            onMouseUp={handleRestDayTouchEnd}
+            onMouseLeave={handleRestDayTouchEnd}
             className="home-rest-action"
+            style={{
+              transform: isHoldingRestDay ? 'scale(0.95)' : 'scale(1)',
+              opacity: isHoldingRestDay ? 0.8 : 1,
+              transition: 'all 0.1s ease'
+            }}
           >
             {isRestDay ? 'Undo Rest Day' : 'Log Rest Day'}
           </button>
@@ -3864,6 +4258,12 @@ const CardioLogger = ({ id, onClose, onUpdateSessionLogs, sessionLogs }) => {
       const [showAnalytics, setShowAnalytics] = useState(false);
       const [showMatrix, setShowMatrix] = useState(false);
       const [showPowerUp, setShowPowerUp] = useState(false);
+      const [showGlory, setShowGlory] = useState(false);
+      const [showHercules, setShowHercules] = useState(false);
+      const [showSpartan, setShowSpartan] = useState(false);
+      const [showButDidYouDie, setShowButDidYouDie] = useState(false);
+      const [showNice, setShowNice] = useState(false);
+      const [showPerfectWeek, setShowPerfectWeek] = useState(false);
       const [activeSession, setActiveSession] = useState(null);
       const [inlineMessage, setInlineMessage] = useState(null);
       const messageTimerRef = useRef(null);
@@ -3890,6 +4290,48 @@ const CardioLogger = ({ id, onClose, onUpdateSessionLogs, sessionLogs }) => {
       const [dismissedDraftDate, setDismissedDraftDate] = useState(null);
       const [quoteIndex, setQuoteIndex] = useState(() => Math.floor(Math.random() * motivationalQuotes.length));
       const [generatorOptions, setGeneratorOptions] = useState({ goal: '', duration: 45, equipment: '' });
+
+      // Easter egg: Shake detection for Hercules
+      const lastShakeRef = useRef(0);
+      useEffect(() => {
+        const handleShake = (event) => {
+          const acceleration = event.accelerationIncludingGravity;
+          const threshold = 15;
+          
+          if (acceleration && (
+            Math.abs(acceleration.x) > threshold ||
+            Math.abs(acceleration.y) > threshold ||
+            Math.abs(acceleration.z) > threshold
+          )) {
+            const now = Date.now();
+            if (now - lastShakeRef.current > 2000) {
+              lastShakeRef.current = now;
+              setShowHercules(true);
+            }
+          }
+        };
+        
+        window.addEventListener('devicemotion', handleShake);
+        return () => window.removeEventListener('devicemotion', handleShake);
+      }, []);
+
+      // Easter egg: Triple-tap logo counter for Spartan
+      const logoTapCountRef = useRef(0);
+      const logoTapTimerRef = useRef(null);
+      const handleLogoTap = () => {
+        logoTapCountRef.current += 1;
+        
+        if (logoTapCountRef.current === 3) {
+          setShowSpartan(true);
+          logoTapCountRef.current = 0;
+          if (logoTapTimerRef.current) clearTimeout(logoTapTimerRef.current);
+        } else {
+          if (logoTapTimerRef.current) clearTimeout(logoTapTimerRef.current);
+          logoTapTimerRef.current = setTimeout(() => {
+            logoTapCountRef.current = 0;
+          }, 1000);
+        }
+      };
 
       const normalizeActiveSession = (session) => {
         if (!session) return null;
@@ -4280,6 +4722,35 @@ const CardioLogger = ({ id, onClose, onUpdateSessionLogs, sessionLogs }) => {
         setDraftPlan(null);
         setDismissedDraftDate(null);
       }, [isRestDay]);
+
+      // Easter egg: Perfect Week detection (7 consecutive days)
+      useEffect(() => {
+        const checkPerfectWeek = () => {
+          const today = new Date();
+          const last7Days = [];
+          for (let i = 0; i < 7; i++) {
+            const date = new Date(today);
+            date.setDate(date.getDate() - i);
+            last7Days.push(toDayKey(date));
+          }
+          
+          const hasAllWorkouts = last7Days.every(dayKey => {
+            const entry = dayEntries[dayKey];
+            return entry && entry.type === 'workout';
+          });
+          
+          if (hasAllWorkouts) {
+            const lastShown = localStorage.getItem('lastPerfectWeekShown');
+            if (lastShown !== todayKey) {
+              setShowPerfectWeek(true);
+              localStorage.setItem('lastPerfectWeekShown', todayKey);
+            }
+          }
+        };
+        
+        checkPerfectWeek();
+      }, [dayEntries, todayKey]);
+
       const createEmptySession = (overrides = {}) => ({
         date: todayKey,
         status: 'draft',
@@ -4383,6 +4854,15 @@ const CardioLogger = ({ id, onClose, onUpdateSessionLogs, sessionLogs }) => {
 
       const updateSessionLogs = (exerciseId, sets) => {
         if (!exerciseId) return;
+        
+        // Easter egg: Check for 69 or 420 in weight
+        sets.forEach(set => {
+          if (set.weight === 69 || set.weight === 420 || set.weight === '69' || set.weight === '420') {
+            setShowNice(true);
+            setTimeout(() => setShowNice(false), 2000);
+          }
+        });
+        
         updateActiveSession({
           id: exerciseId,
           name: EQUIPMENT_DB[exerciseId]?.name || 'Exercise',
@@ -5179,6 +5659,9 @@ return (
                       isRestDay={isRestDay}
                       onLogRestDay={logRestDay}
                       onUndoRestDay={undoRestDay}
+                      onTriggerGlory={() => setShowGlory(true)}
+                      onTripleTapLogo={handleLogoTap}
+                      onLongPressRestDay={() => setShowButDidYouDie(true)}
                     />
                   )}
                   {tab === 'workout' && (
@@ -5248,6 +5731,37 @@ return (
             <PowerUpEffect 
               show={showPowerUp} 
               onClose={() => setShowPowerUp(false)} 
+            />
+
+            <GloryEasterEgg 
+              show={showGlory} 
+              onClose={() => setShowGlory(false)} 
+            />
+
+            <HerculesShake 
+              show={showHercules} 
+              onClose={() => setShowHercules(false)} 
+            />
+
+            <SpartanKick 
+              show={showSpartan} 
+              onClose={() => setShowSpartan(false)} 
+            />
+
+            <ButDidYouDie 
+              show={showButDidYouDie} 
+              onClose={() => setShowButDidYouDie(false)}
+              onConfirm={() => {
+                setShowButDidYouDie(false);
+                logRestDay();
+              }}
+            />
+
+            <NiceToast show={showNice} />
+
+            <PerfectWeek 
+              show={showPerfectWeek} 
+              onClose={() => setShowPerfectWeek(false)} 
             />
           </div>
         </>
