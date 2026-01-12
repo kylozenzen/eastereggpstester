@@ -2111,7 +2111,7 @@ const Home = ({
           </div>
           <div className="home-section-card">
             <div className="home-section-title">Start Today</div>
-            <div className="home-section-subtitle">Draft a calm session in seconds.</div>
+            <div className="home-section-subtitle">Draft a session in seconds.</div>
             <button
               onClick={onStartWorkout}
               className="home-primary-button"
