@@ -1,6 +1,6 @@
 # 🎉 Planet Strength Easter Eggs Guide
 
-All 8 Easter eggs are now live! Here's how to trigger each one:
+All 7 Easter eggs are now live! Here's how to trigger each one:
 
 ## 1. 😎 Kung Fu (Matrix)
 **How:** Tap "Add" on the "Kung Fu" workout in the exercise list
@@ -18,31 +18,25 @@ All 8 Easter eggs are now live! Here's how to trigger each one:
 **Duration:** 5 seconds
 **Tip:** Avatar will glow purple while holding
 
-## 4. 🏔️ Hercules Shake
-**How:** Shake your phone hard!
-**Effect:** "FROM ZERO TO HERO!" with golden clouds and Mount Olympus theme
-**Duration:** 4 seconds
-**Note:** Won't trigger more than once every 2 seconds
-
-## 5. 🗡️ Spartan Kick (300)
-**How:** Triple-tap "PLANET STRENGTH" logo at top of Home screen (tap 3 times fast)
+## 4. 🗡️ Spartan Kick (300)
+**How:** Triple-tap the bottom of the Workouts tab (tap 3 times fast)
 **Effect:** "THIS IS SPARTA!" with Spartan helmet and kick animation
 **Duration:** 3 seconds
-**Tip:** Must tap within 1 second between taps
+**Tip:** Must tap within 800ms
 
-## 6. 💀 But Did You Die? (Hangover)
+## 5. 💀 But Did You Die? (Hangover)
 **How:** Long-press (hold 2 seconds) the "Log Rest Day" button
 **Effect:** Mr. Chow meme with choice to proceed or cancel
 **Duration:** Until you tap
 **Note:** Only works when NOT already on rest day
 
-## 7. 😎 Nice (69/420)
+## 6. 😎 Nice (69/420)
 **How:** Log any weight as 69 or 420 lbs
 **Effect:** Quick "Nice 😎" toast at bottom of screen
 **Duration:** 2 seconds
 **Note:** Subtle and immature, exactly as intended
 
-## 8. 🎩 Perfect Week (HIMYM - Barney)
+## 7. 🎩 Perfect Week (HIMYM - Barney)
 **How:** Complete workouts 7 days in a row
 **Effect:** "YOU JUST PULLED A BARNEY!" with suit graphics and high-five vibe
 **Duration:** 5 seconds
@@ -58,9 +52,10 @@ All 8 Easter eggs are now live! Here's how to trigger each one:
 
 **On Home Screen:**
 - Long-press avatar → Glory
-- Triple-tap logo → Sparta
 - Long-press "Log Rest Day" → But Did You Die?
-- Shake phone → Hercules
+
+**On Workouts Screen:**
+- Triple-tap bottom hotspot → Sparta
 
 **During Workout:**
 - Log 69/420 weight → Nice
