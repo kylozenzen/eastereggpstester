@@ -4,6 +4,14 @@ const { useState, useEffect, useMemo, useRef, useCallback } = React;
     const FOLLOW_URL = 'https://www.instagram.com/bensoup/';
     const DONATE_URL = 'https://account.venmo.com/u/bensoup';
     const APP_VERSION = '1.0.0'
+    const TIMING = {
+      TRIPLE_TAP_WINDOW: 1000,
+      LONG_PRESS_AVATAR: 1500,
+      LONG_PRESS_REST_DAY: 2000,
+      TOAST_DURATION: 1500,
+      MESSAGE_DURATION: 3200,
+      DEBOUNCE_STORAGE: 500
+    };
 
     // ========== PWA SETUP ==========
     // Confirm manifest + icon links (guarded for templates that omit them).
@@ -1252,30 +1260,57 @@ const motivationalQuotes = [
       );
     };
 
-    const TabBar = ({ currentTab, setTab }) => (
-      <div className="fixed bottom-0 left-0 right-0 tabbar z-50" style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}>
-        <div className="flex justify-around items-center h-16 px-2">
-          {[
-            { id: 'home', label: 'Home', icon: 'Home' },
-            { id: 'workout', label: 'Workout', icon: 'Dumbbell' },
-            { id: 'profile', label: 'Profile', icon: 'User' }
-          ].map(t => (
-            <button 
-              key={t.id} 
-              onClick={() => setTab(t.id)} 
-              className={`flex flex-col items-center gap-1 w-full h-full justify-center transition-colors ${
-                currentTab === t.id 
-                  ? 'tab-active' 
-                  : 'text-gray-400'
-              }`}
-            >
-              <Icon name={t.icon} className="w-6 h-6" />
-              <span className="text-xs font-semibold">{t.label}</span>
-            </button>
-          ))}
+    const TabBar = ({ currentTab, setTab, onWorkoutTripleTap }) => {
+      const tapCountRef = React.useRef(0);
+      const tapTimerRef = React.useRef(null);
+
+      const handleWorkoutTap = () => {
+        if (currentTab === 'workout') {
+          tapCountRef.current += 1;
+          if (tapCountRef.current === 3) {
+            tapCountRef.current = 0;
+            if (tapTimerRef.current) clearTimeout(tapTimerRef.current);
+            onWorkoutTripleTap?.();
+            return;
+          }
+          if (tapTimerRef.current) clearTimeout(tapTimerRef.current);
+          tapTimerRef.current = setTimeout(() => { tapCountRef.current = 0; }, 1000);
+        } else {
+          tapCountRef.current = 0;
+          if (tapTimerRef.current) clearTimeout(tapTimerRef.current);
+        }
+        setTab('workout');
+      };
+
+      React.useEffect(() => {
+        return () => { if (tapTimerRef.current) clearTimeout(tapTimerRef.current); };
+      }, []);
+
+      return (
+        <div className="fixed bottom-0 left-0 right-0 tabbar z-50" style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}>
+          <div className="flex justify-around items-center h-16 px-2">
+            {[
+              { id: 'home', label: 'Home', icon: 'Home' },
+              { id: 'workout', label: 'Workout', icon: 'Dumbbell' },
+              { id: 'profile', label: 'Profile', icon: 'User' }
+            ].map(t => (
+              <button 
+                key={t.id} 
+                onClick={t.id === 'workout' ? handleWorkoutTap : () => setTab(t.id)} 
+                className={`flex flex-col items-center gap-1 w-full h-full justify-center transition-colors ${
+                  currentTab === t.id 
+                    ? 'tab-active' 
+                    : 'text-gray-400'
+                }`}
+              >
+                <Icon name={t.icon} className="w-6 h-6" />
+                <span className="text-xs font-semibold">{t.label}</span>
+              </button>
+            ))}
+          </div>
         </div>
-      </div>
-    );
+      );
+    };
 
     const ToggleRow = ({ icon, title, subtitle, enabled, onToggle }) => (
       <button
@@ -1970,6 +2005,13 @@ const Home = ({
   const [isHolding, setIsHolding] = useState(false);
   const [isHoldingRestDay, setIsHoldingRestDay] = useState(false);
 
+  useEffect(() => {
+    return () => {
+      if (longPressTimerRef.current) clearTimeout(longPressTimerRef.current);
+      if (restDayTimerRef.current) clearTimeout(restDayTimerRef.current);
+    };
+  }, []);
+
   const handleAvatarTouchStart = () => {
     setIsHolding(true);
     longPressTimerRef.current = setTimeout(() => {
@@ -2116,7 +2158,7 @@ const Home = ({
   );
 };
 
-const Workout = ({ profile, onSelectExercise, settings, setSettings, pinnedExercises, setPinnedExercises, recentExercises, activeSession, onFinishSession, onStartWorkoutFromBuilder, onAddExerciseFromSearch, onPushMessage, onRemoveSessionExercise, onSwapSessionExercise, onStartEmptySession, isRestDay, onCancelSession, onTripleTapSpartan }) => {
+const Workout = ({ profile, onSelectExercise, settings, setSettings, pinnedExercises, setPinnedExercises, recentExercises, activeSession, onFinishSession, onStartWorkoutFromBuilder, onAddExerciseFromSearch, onPushMessage, onRemoveSessionExercise, onSwapSessionExercise, onStartEmptySession, isRestDay, onCancelSession }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const debouncedSearchQuery = useDebounce(searchQuery, 200);
   const [libraryVisible, setLibraryVisible] = useState(settings.showAllExercises);
@@ -2607,10 +2649,6 @@ const Workout = ({ profile, onSelectExercise, settings, setSettings, pinnedExerc
           </div>
         </div>
       )}
-      <div
-        className="absolute bottom-0 left-0 right-0 h-8"
-        onClick={onTripleTapSpartan}
-      ></div>
     </div>
   );
 };
@@ -4243,33 +4281,6 @@ const CardioLogger = ({ id, onClose, onUpdateSessionLogs, sessionLogs }) => {
       const [quoteIndex, setQuoteIndex] = useState(() => Math.floor(Math.random() * motivationalQuotes.length));
       const [generatorOptions, setGeneratorOptions] = useState({ goal: '', duration: 45, equipment: '' });
 
-      // Easter egg: Triple-tap counter for Spartan
-      const logoTapCountRef = useRef(0);
-      const logoTapTimerRef = useRef(null);
-      const logoTapStartRef = useRef(0);
-      const handleLogoTap = () => {
-        const now = Date.now();
-
-        if (logoTapCountRef.current === 0 || now - logoTapStartRef.current > 800) {
-          logoTapCountRef.current = 1;
-          logoTapStartRef.current = now;
-          if (logoTapTimerRef.current) clearTimeout(logoTapTimerRef.current);
-          logoTapTimerRef.current = setTimeout(() => {
-            logoTapCountRef.current = 0;
-            logoTapStartRef.current = 0;
-          }, 800);
-          return;
-        }
-
-        logoTapCountRef.current += 1;
-        if (logoTapCountRef.current === 3) {
-          setShowSpartan(true);
-          logoTapCountRef.current = 0;
-          logoTapStartRef.current = 0;
-          if (logoTapTimerRef.current) clearTimeout(logoTapTimerRef.current);
-        }
-      };
-
       const normalizeActiveSession = (session) => {
         if (!session) return null;
         const date = session.dateKey || session.date || toDayKey(new Date());
@@ -4472,24 +4483,6 @@ const CardioLogger = ({ id, onClose, onUpdateSessionLogs, sessionLogs }) => {
         });
       }, [loaded, pinnedExercises, recentExercises, exerciseUsageCounts, dayEntries, lastExerciseStats]);
 
-      useEffect(() => {
-        if (!loaded) return;
-        const pinnedInSettings = settings?.pinnedExercises || [];
-        const different = pinnedInSettings.length !== pinnedExercises.length || pinnedInSettings.some(id => !pinnedExercises.includes(id));
-        if (different) {
-          setSettings(prev => ({ ...(prev || {}), pinnedExercises }));
-        }
-      }, [pinnedExercises, loaded]); 
-
-      useEffect(() => {
-        if (!loaded) return;
-        const pinnedInSettings = settings?.pinnedExercises || [];
-        const different = pinnedInSettings.length !== pinnedExercises.length || pinnedExercises.some(id => !pinnedInSettings.includes(id));
-        if (different) {
-          setPinnedExercises(pinnedInSettings);
-        }
-      }, [settings?.pinnedExercises, loaded]);
-      
       useEffect(() => {
         if (settings.darkMode) {
           document.body.classList.add('dark-mode');
@@ -5619,7 +5612,6 @@ return (
                       onStartEmptySession={startEmptySession}
                       isRestDay={isRestDay}
                       onCancelSession={cancelTodaySession}
-                      onTripleTapSpartan={handleLogoTap}
                     />
                   )}
                   {tab === 'profile' && (
@@ -5637,7 +5629,7 @@ return (
               )}
             </div>
 
-            {!showAnalytics && <TabBar currentTab={tab} setTab={setTab} />}
+            {!showAnalytics && <TabBar currentTab={tab} setTab={setTab} onWorkoutTripleTap={() => setShowSpartan(true)} />}
 
             {activeEquipment && (
               <EquipmentDetail
