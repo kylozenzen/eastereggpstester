@@ -1802,53 +1802,6 @@ const GloryEasterEgg = ({ show, onClose }) => {
   );
 };
 
-const HerculesShake = ({ show, onClose }) => {
-  useEffect(() => {
-    if (!show) return;
-    const timer = setTimeout(onClose, 4000);
-    return () => clearTimeout(timer);
-  }, [show, onClose]);
-
-  if (!show) return null;
-
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center" onClick={onClose}>
-      <div className="absolute inset-0 bg-gradient-to-b from-blue-900 via-purple-900 to-yellow-900 opacity-95"></div>
-      
-      <div className="relative z-10 text-center">
-        <div 
-          className="text-6xl font-black mb-4 text-yellow-400"
-          style={{
-            textShadow: '0 0 40px rgba(255,215,0,1), 0 0 80px rgba(255,215,0,0.5)',
-            animation: 'herculesGlow 1s ease-in-out infinite'
-          }}
-        >
-          FROM ZERO TO HERO!
-        </div>
-        <div className="text-3xl text-white font-bold mb-2" style={{ textShadow: '0 0 20px rgba(255,255,255,0.8)' }}>
-          ⚡ STRENGTH OF THE GODS ⚡
-        </div>
-        <div className="text-xl text-yellow-200 font-semibold">
-          🏛️ Mount Olympus Approves 🏛️
-        </div>
-      </div>
-
-      <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-yellow-600 to-transparent opacity-50" style={{ animation: 'columnRise 1s ease-out' }}></div>
-
-      <style>{`
-        @keyframes herculesGlow {
-          0%, 100% { transform: scale(1); filter: brightness(1); }
-          50% { transform: scale(1.05); filter: brightness(1.3); }
-        }
-        @keyframes columnRise {
-          from { transform: translateY(100%); }
-          to { transform: translateY(0); }
-        }
-      `}</style>
-    </div>
-  );
-};
-
 const SpartanKick = ({ show, onClose }) => {
   useEffect(() => {
     if (!show) return;
@@ -2010,7 +1963,6 @@ const Home = ({
   onLogRestDay,
   onUndoRestDay,
   onTriggerGlory,
-  onTripleTapLogo,
   onLongPressRestDay
 }) => {
   const longPressTimerRef = useRef(null);
@@ -2070,10 +2022,7 @@ const Home = ({
       <div className="bg-white border-b border-gray-100 sticky top-0 z-20" style={{ paddingTop: 'env(safe-area-inset-top)' }}>
         <div className="px-4 py-3 flex items-center justify-between">
           <div>
-            <div 
-              className="text-[11px] text-gray-400 font-bold uppercase tracking-[0.2em] cursor-pointer select-none"
-              onClick={onTripleTapLogo}
-            >
+            <div className="text-[11px] text-gray-400 font-bold uppercase tracking-[0.2em] select-none">
               PLANET STRENGTH
             </div>
             <h1 className="text-xl font-black text-gray-900">Welcome back, {profile.username || 'Athlete'}</h1>
@@ -2167,7 +2116,7 @@ const Home = ({
   );
 };
 
-const Workout = ({ profile, onSelectExercise, settings, setSettings, pinnedExercises, setPinnedExercises, recentExercises, activeSession, onFinishSession, onStartWorkoutFromBuilder, onAddExerciseFromSearch, onPushMessage, onRemoveSessionExercise, onSwapSessionExercise, onStartEmptySession, isRestDay, onCancelSession }) => {
+const Workout = ({ profile, onSelectExercise, settings, setSettings, pinnedExercises, setPinnedExercises, recentExercises, activeSession, onFinishSession, onStartWorkoutFromBuilder, onAddExerciseFromSearch, onPushMessage, onRemoveSessionExercise, onSwapSessionExercise, onStartEmptySession, isRestDay, onCancelSession, onTripleTapSpartan }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const debouncedSearchQuery = useDebounce(searchQuery, 200);
   const [libraryVisible, setLibraryVisible] = useState(settings.showAllExercises);
@@ -2400,7 +2349,7 @@ const Workout = ({ profile, onSelectExercise, settings, setSettings, pinnedExerc
   };
 
   return (
-    <div className="flex flex-col h-full bg-gray-50 workout-shell">
+    <div className="flex flex-col h-full bg-gray-50 workout-shell relative">
       <div className="bg-white border-b border-gray-100 sticky top-0 z-20" style={{ paddingTop: 'env(safe-area-inset-top)' }}>
         <div className="px-4 py-4 flex items-center justify-between">
           <div>
@@ -2658,6 +2607,10 @@ const Workout = ({ profile, onSelectExercise, settings, setSettings, pinnedExerc
           </div>
         </div>
       )}
+      <div
+        className="absolute bottom-0 left-0 right-0 h-8"
+        onClick={onTripleTapSpartan}
+      ></div>
     </div>
   );
 };
@@ -4259,7 +4212,6 @@ const CardioLogger = ({ id, onClose, onUpdateSessionLogs, sessionLogs }) => {
       const [showMatrix, setShowMatrix] = useState(false);
       const [showPowerUp, setShowPowerUp] = useState(false);
       const [showGlory, setShowGlory] = useState(false);
-      const [showHercules, setShowHercules] = useState(false);
       const [showSpartan, setShowSpartan] = useState(false);
       const [showButDidYouDie, setShowButDidYouDie] = useState(false);
       const [showNice, setShowNice] = useState(false);
@@ -4291,45 +4243,30 @@ const CardioLogger = ({ id, onClose, onUpdateSessionLogs, sessionLogs }) => {
       const [quoteIndex, setQuoteIndex] = useState(() => Math.floor(Math.random() * motivationalQuotes.length));
       const [generatorOptions, setGeneratorOptions] = useState({ goal: '', duration: 45, equipment: '' });
 
-      // Easter egg: Shake detection for Hercules
-      const lastShakeRef = useRef(0);
-      useEffect(() => {
-        const handleShake = (event) => {
-          const acceleration = event.accelerationIncludingGravity;
-          const threshold = 15;
-          
-          if (acceleration && (
-            Math.abs(acceleration.x) > threshold ||
-            Math.abs(acceleration.y) > threshold ||
-            Math.abs(acceleration.z) > threshold
-          )) {
-            const now = Date.now();
-            if (now - lastShakeRef.current > 2000) {
-              lastShakeRef.current = now;
-              setShowHercules(true);
-            }
-          }
-        };
-        
-        window.addEventListener('devicemotion', handleShake);
-        return () => window.removeEventListener('devicemotion', handleShake);
-      }, []);
-
-      // Easter egg: Triple-tap logo counter for Spartan
+      // Easter egg: Triple-tap counter for Spartan
       const logoTapCountRef = useRef(0);
       const logoTapTimerRef = useRef(null);
+      const logoTapStartRef = useRef(0);
       const handleLogoTap = () => {
-        logoTapCountRef.current += 1;
-        
-        if (logoTapCountRef.current === 3) {
-          setShowSpartan(true);
-          logoTapCountRef.current = 0;
-          if (logoTapTimerRef.current) clearTimeout(logoTapTimerRef.current);
-        } else {
+        const now = Date.now();
+
+        if (logoTapCountRef.current === 0 || now - logoTapStartRef.current > 800) {
+          logoTapCountRef.current = 1;
+          logoTapStartRef.current = now;
           if (logoTapTimerRef.current) clearTimeout(logoTapTimerRef.current);
           logoTapTimerRef.current = setTimeout(() => {
             logoTapCountRef.current = 0;
-          }, 1000);
+            logoTapStartRef.current = 0;
+          }, 800);
+          return;
+        }
+
+        logoTapCountRef.current += 1;
+        if (logoTapCountRef.current === 3) {
+          setShowSpartan(true);
+          logoTapCountRef.current = 0;
+          logoTapStartRef.current = 0;
+          if (logoTapTimerRef.current) clearTimeout(logoTapTimerRef.current);
         }
       };
 
@@ -5660,7 +5597,6 @@ return (
                       onLogRestDay={logRestDay}
                       onUndoRestDay={undoRestDay}
                       onTriggerGlory={() => setShowGlory(true)}
-                      onTripleTapLogo={handleLogoTap}
                       onLongPressRestDay={() => setShowButDidYouDie(true)}
                     />
                   )}
@@ -5683,6 +5619,7 @@ return (
                       onStartEmptySession={startEmptySession}
                       isRestDay={isRestDay}
                       onCancelSession={cancelTodaySession}
+                      onTripleTapSpartan={handleLogoTap}
                     />
                   )}
                   {tab === 'profile' && (
@@ -5736,11 +5673,6 @@ return (
             <GloryEasterEgg 
               show={showGlory} 
               onClose={() => setShowGlory(false)} 
-            />
-
-            <HerculesShake 
-              show={showHercules} 
-              onClose={() => setShowHercules(false)} 
             />
 
             <SpartanKick 
